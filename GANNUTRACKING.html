@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GANNUTRACKING</title>
+<style>
+:root{--bg:#fafaf8;--fg:#1c1c1a;--mute:#76766f;--line:#e2e2dc;--acc:#1c1c1a;--accfg:#fafaf8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161615;--fg:#ececE8;--mute:#8d8d86;--line:#2c2c29;--acc:#ececE8;--accfg:#161615}}
+:root[data-theme="dark"]{--bg:#161615;--fg:#ececE8;--mute:#8d8d86;--line:#2c2c29;--acc:#ececE8;--accfg:#161615}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:560px;margin:0 auto;padding:40px 20px 60px}
+h1{font-size:14px;letter-spacing:.2em;font-weight:600;margin:0 0 4px}
+.sub{color:var(--mute);font-size:13px;margin-bottom:40px}
+.card{border:1px solid var(--line);border-radius:14px;padding:28px 22px;text-align:center}
+.label{font-size:12px;color:var(--mute);text-transform:uppercase;letter-spacing:.12em}
+.topic{font-size:24px;line-height:1.3;font-weight:600;margin:14px 0 24px;min-height:2.6em;display:flex;align-items:center;justify-content:center}
+.row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+button{font:inherit;font-size:15px;padding:10px 18px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--fg);cursor:pointer}
+button.p{background:var(--acc);color:var(--accfg);border-color:var(--acc)}
+button:disabled{opacity:.35;cursor:default}
+.lock{color:var(--mute);font-size:13px;margin-top:16px}
+h2{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);margin:40px 0 10px;font-weight:600}
+ul{list-style:none;margin:0;padding:0}
+li{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
+li span:last-child{color:var(--mute);white-space:nowrap}
+.tools{margin-top:14px}
+.tools button{font-size:13px;padding:7px 12px}
+textarea{width:100%;height:110px;margin-top:10px;background:transparent;color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:8px;font:12px monospace}
+</style>
+</head>
+<body>
+<main>
+  <h1>GANNUTRACKING</h1>
+  <div class="sub" id="prog"></div>
+  <div class="card">
+    <div class="label" id="lbl"></div>
+    <div class="topic" id="topic"></div>
+    <div class="row" id="btns"></div>
+    <div class="lock" id="note"></div>
+  </div>
+  <h2>Completed</h2>
+  <ul id="log"></ul>
+  <div class="tools row" style="justify-content:flex-start">
+    <button id="copy">Copy for Google Sheet</button>
+    <button id="csv">Download CSV</button>
+    <button id="reset">Reset</button>
+  </div>
+  <textarea id="ta" hidden readonly></textarea>
+</main>
+<script>
+var TOPICS=["Learning as a Process","Learning as an Outcome","Humanistic Approach – Carl Rogers","Constructivist Approach – Jean Piaget","Constructivist Approach – Lev Vygotsky","Readiness","Maturation","Motivation","Task","Methods of Learning","Teacher-Centric Approach","Learner-Centric Approach","Learning-Centric Approach","Characteristics of Teacher-Centric, Learner-Centric and Learning-Centric Approaches","Process of Organizing Learning","Teaching-Learning Materials (TLMs)","Audio-Visual (AV) Aids","Using the Context of the Learner in Teaching-Learning","Group Learning","Small Group Learning","Self-Learning","Learner in the Context of Inclusive Education","Assessment and Evaluation in Constructivist Perspective","Concept of Assessment","Concept of Evaluation","Continuous and Comprehensive Evaluation (CCE)","Formative Assessment","Summative Assessment","Diagnostic Assessment","Assessment of Learning","Assessment for Learning","Assessment as Learning","Subject-Based Learning in Constructivist Perspective","Projects as Assessment Tools","Assignments as Assessment Tools","Observation as an Assessment Technique","Teacher-Made Tests","Self-Assessment","Peer-Assessment","Steps of Test Construction","Principles of Test Construction","Development of Test Blueprint","Preparation of Test Items","Standardized Tests","Ashoka – Conquests","Ashoka – Administration","Ashoka – Missionary Activities","Kharavela – Achievements as Mentioned in the Hathigumpha Inscription","Samudragupta – Conquests","Harshavardhana – Conquests","Harshavardhana – Administration","Harshavardhana – Religious Activities","Art during the Maurya Age","Literature during the Maurya Age","Architecture during the Maurya Age","Science during the Maurya Age","Art during the Gupta Age","Literature during the Gupta Age","Architecture during the Gupta Age","Science during the Gupta Age","Art during the Kushana Age","Literature during the Kushana Age","Architecture during the Kushana Age","Science during the Kushana Age","Administration under Balban","Administration under Alauddin Khilji","Administration under Feroze Shah Tughlaq","Mughal Architecture during Akbar’s Reign","Mughal Painting during Akbar’s Reign","Mughal Architecture during Jahangir’s Reign","Mughal Painting during Jahangir’s Reign","Mughal Architecture during Shah Jahan’s Reign","Mughal Painting during Shah Jahan’s Reign","Robert Clive – Role in the Foundation of British Power in India","Foundation of British Power in India","Administrative Reforms of Warren Hastings","Judicial Reforms of Warren Hastings","Revenue Reforms of Lord Cornwallis","Subsidiary Alliance","Reforms of Lord William Bentinck","Doctrine of Lapse","Revolt of 1857","Development of Press in India","Development of Literature in India","Development of Education in India","Formation of Political Associations","Swadeshi Movement","Non-Cooperation Movement","Civil Disobedience Movement","Quit India Movement","Indian National Army (INA)","Partition of India","Indian Independence","Causes of the First World War","Consequences of the First World War","Causes of the Russian Revolution","Progress of the Russian Revolution","Effects of the Russian Revolution","Causes of the Second World War","Consequences of the Second World War","Salient Features of the Indian Constitution","Preamble of the Indian Constitution","Fundamental Rights","Directive Principles of State Policy (DPSP)","Fundamental Duties","President of India","Prime Minister of India","Council of Ministers","Parliament of India","Supreme Court of India","Governor","Chief Minister","State Council of Ministers","State Legislative Assembly","High Courts","Rural Local Governance","Urban Local Governance","Electoral Process","Election Commission of India","India’s Foreign Policy","India’s Relations with Neighbouring Countries","United Nations (UN)","United Nations General Assembly","United Nations Security Council","Human Rights","Socialism","Liberalism","Democracy","Authoritarianism","Welfare State","Globalization","Kautilya","Raja Ram Mohan Roy","Bal Gangadhar Tilak","Swami Vivekananda","Mahatma Gandhi","Jawaharlal Nehru","Dr. B. R. Ambedkar","Physiography of India","Drainage System of India","Climate of India","Types of Resources","Classification of Resources","Land Resources","Biotic Resources","Mineral Resources","Energy Resources","Water Resources","Agricultural Resources","Industrial Resources","First-Order Landforms","Second-Order Landforms","Third-Order Landforms","Development of Landforms","Work of Rivers","Work of Wind","Work of Glaciers","Interior of the Earth","Rocks and Their Types","Structure of the Atmosphere","Composition of the Atmosphere","Insolation","Temperature","Atmospheric Pressure","Winds","Humidity","Rainfall","General Relief of the Ocean Floor","Salinity of Ocean Water","Temperature of Ocean Water","Oceanic Circulation","Ocean Waves","Ocean Tides","Ocean Currents","Basic Features of the Globe","Basic Features of Maps","Types of Maps","Map Scale","Contours of Relief Features","Concept of Latitude","Concept of Longitude","International Date Line","Time Zones","Local Time","Standard Time","Features of the Indian Economy","Broad Demographic Characteristics of India","Overpopulation","Need to Address the Challenges of Overpopulation","Policies for Facing the Challenges of Overpopulation","Poverty – Measures of Poverty","Causes of Poverty","Consequences of Poverty","Policies for Poverty Eradication","Government Programmes for Poverty Eradication","Remedies for Poverty","Types of Unemployment","Measurement of Unemployment","Causes of Unemployment","Consequences of Unemployment","Programmes for Reducing Unemployment","Meaning of Inflation","Types of Inflation","Demand-Pull Inflation","Cost-Push Inflation","Causes of Inflation","Consequences of Inflation","Measures to Control Inflation","Meaning of Economic Development","Indicators of Economic Development","National Income","Physical Quality of Life Index (PQLI)","Human Development Index (HDI)","Concept of Sustainable Development","Need for Sustainable Development","Meaning of Money","Types of Money","Functions of Money","Meaning of Banking","Meaning of Commercial Banks","Functions of Commercial Banks","Credit Creation by Commercial Banks","Meaning of Central Banking","Functions of Central Banking","Monetary Policy"];
+var KEY="gannutracking-v1";
+var S={locked:null,pending:null,done:[]};
+try{var r=localStorage.getItem(KEY);if(r){var p=JSON.parse(r);if(p&&p.done)S=p;}}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+function $(i){return document.getElementById(i)}
+function fmt(t){var d=new Date(t);return d.toLocaleDateString(undefined,{day:"numeric",month:"short"})}
+function stamp(t){return new Date(t).toISOString().slice(0,16).replace("T"," ")}
+function left(){var d={};S.done.forEach(function(x){d[x.topic]=1});if(S.locked)d[S.locked.topic]=1;return TOPICS.filter(function(t){return !d[t]})}
+function shuffle(){var l=left();if(!l.length){S.pending=null;return}
+  var t;do{t=l[Math.floor(Math.random()*l.length)]}while(l.length>1&&t===S.pending);S.pending=t;save();render()}
+function accept(){if(!S.pending)return;S.locked={topic:S.pending,start:Date.now()};S.pending=null;save();render()}
+function complete(){if(!S.locked)return;S.done.push({topic:S.locked.topic,start:S.locked.start,end:Date.now()});S.locked=null;save();render()}
+function render(){
+  var b=$("btns"),n=$("note"),l=left().length;
+  $("prog").textContent=S.done.length+" of "+TOPICS.length+" completed";
+  b.innerHTML="";n.textContent="";
+  if(S.locked){
+    $("lbl").textContent="Locked – in progress";$("topic").textContent=S.locked.topic;
+    var c=document.createElement("button");c.className="p";c.textContent="Mark completed";c.onclick=complete;b.appendChild(c);
+    n.textContent="Started "+fmt(S.locked.start)+". Shuffle is disabled until you complete this.";
+  }else if(S.pending){
+    $("lbl").textContent="Research this?";$("topic").textContent=S.pending;
+    var y=document.createElement("button");y.className="p";y.textContent="Yes, lock it";y.onclick=accept;
+    var s=document.createElement("button");s.textContent="Shuffle again";s.onclick=shuffle;
+    b.appendChild(y);b.appendChild(s);
+  }else{
+    $("lbl").textContent=l?"Ready":"All done";$("topic").textContent=l?"Tap shuffle to get a topic":"You finished every topic.";
+    if(l){var h=document.createElement("button");h.className="p";h.textContent="Shuffle";h.onclick=shuffle;b.appendChild(h);}
+  }
+  var ul=$("log");ul.innerHTML="";
+  S.done.slice().reverse().forEach(function(x){var li=document.createElement("li");
+    var a=document.createElement("span");a.textContent=x.topic;var d=document.createElement("span");d.textContent=fmt(x.end);
+    li.appendChild(a);li.appendChild(d);ul.appendChild(li)});
+  if(!S.done.length){var e=document.createElement("li");e.textContent="Nothing yet.";e.style.color="var(--mute)";ul.appendChild(e)}
+}
+function rows(){var q=["Topic\tStarted\tCompleted"];S.done.forEach(function(x){q.push(x.topic+"\t"+stamp(x.start)+"\t"+stamp(x.end))});return q}
+$("copy").onclick=function(){var t=rows().join("\n"),ta=$("ta");
+  var fallback=function(){ta.hidden=false;ta.value=t;ta.focus();ta.select()};
+  try{navigator.clipboard.writeText(t).then(function(){$("copy").textContent="Copied – paste in Sheet";setTimeout(function(){$("copy").textContent="Copy for Google Sheet"},2000)},fallback)}catch(e){fallback()}};
+$("csv").onclick=function(){var t=rows().map(function(r){return r.split("\t").map(function(c){return '"'+c.replace(/"/g,'""')+'"'}).join(",")}).join("\n");
+  var a=document.createElement("a");a.href="data:text/csv;charset=utf-8,"+encodeURIComponent(t);a.download="gannutracking.csv";document.body.appendChild(a);a.click();a.remove()};
+$("reset").onclick=function(){if(confirm("Erase all progress on this browser?")){S={locked:null,pending:null,done:[]};save();render()}};
+render();
+</script>
+</body>
+</html>
